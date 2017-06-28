@@ -1,0 +1,2 @@
+# dash-lodash-
+imitate lodash
