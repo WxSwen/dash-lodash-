@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    const dash = function () {},
+        _   = new dash();
+    function toStr (obj) {
+        return Object.prototype.toString.call(obj);
+    }
+    function isArray (arr) {
+        if(typeof Array.isArray === 'function'){
+            return Array.isArray(arr);
+        }
+        return toStr(arr) === '[object Array]';
+    }
+//_.chunk
+    dash.prototype.chunk = (arr,num)=>{
+        if(isArray(arr)){
+            return [arr.splice(0,num),arr];
+        }
+    };
+//    console.log(JSON.stringify(_.chunk(['a', 'b', 'c', 'd'], 3)));
+//_.compact
+    dash.prototype.compact = (arr)=>{
+        return arr.filter((item)=>{
+            return item;
+        })
+    };
+//    console.log(_.compact([0, 1, false, 2, '', NaN]));
+//_.concat
+    dash.prototype.concat = function(){
+        let arg = [...arguments],
+            arr = arguments[0];
+        for(let i = 1;i<arg.length;i++){
+            arr.push(arg[i]);
+        }
+            return arr;
+    };
+//    console.log(JSON.stringify(_.concat([1], 2, [3], [[4]])));
+//_.difference
+    dash.prototype.difference = function(){
+        let arg = [...arguments],
+            arr = arg[0];
+        for(let k = 1;k<arg.length;k++){
+            reduce(arr,arg[k]);
+        }
+        return arr;
+        function reduce(arr1,arr2){
+            for(let i = 0;i<arr1.length;i++){
+                let idx = arr2.indexOf(arr1[i]);
+                idx !== -1 && arr1.splice(i,1);
+            }
+        }
+    };
+//    console.log(_.difference([2, 1,3,4,5], [2, 3]));
+//_.differenceBy
+    dash.prototype.differenceBy = function(){
+        let arg = [...arguments],
+            arr = arg[0],
+            format = arg[arg.length - 1];
+        for(let k = 1;k<arg.length - 1;k++){
+            reduce(arr,arg[k]);
+        }
+        return arr;
+        function reduce(arr1,arr2){
+            for(let j = 0;j<arr1.length;j++){
+                for(let i = 0;i<arr2.length;i++){
+                    if(format(arr1[j]) === format(arr2[i])){
+                        arr1.splice(j,1);
+                    }
+                }
+            }
+        }
+    };
+//    console.log(JSON.stringify(_.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor)));
+//_.drop
+    dash.prototype.drop = function(){
+        let arg = [...arguments],arr = arg[0],num = arg[1];
+        if(!isArray(arr)) return;
+        if(!num){
+            num === 0 ? arr.slice(0) : arr.splice(0,1);
+        }else if(arr.length <= num){
+            arr = [];
+        }else{
+            arr.splice(0,num);
+        }
+        return arr;
+    };
+//    console.log(_.drop([1, 2, 3]));
+//    // => [2, 3]
+//
+//    console.log(_.drop([1, 2, 3], 2));
+//    // => [3]
+//
+//    console.log(_.drop([1, 2, 3], 5));
+//    // => []
+//
+//    console.log(_.drop([1, 2, 3], 0));
+//    // => [1, 2, 3]
+//_.drop
+    dash.prototype.dropRight = function(){
+        let arg = [...arguments],arr = arg[0],num = arg[1];
+        if(!isArray(arr)) return;
+        if(!num){
+            return num === 0 ? arr : arr.slice(0,-1);
+        }else if(arr.length <= num){
+            return [];
+        }
+        return arr.slice(0,-num);
+    };
+//    console.log(_.dropRight([1, 2, 3]));
+//    // => [1, 2]
+//
+//    console.log(_.dropRight([1, 2, 3], 2));
+//    // => [1]
+//
+//    console.log(_.dropRight([1, 2, 3], 5));
+//    // => []
+//
+//    console.log(_.dropRight([1, 2, 3], 0));
+//    // => [1, 2, 3]
+
+
+
+//_.fill
+    dash.prototype.fill = function(){
+        let arg = [...arguments],
+            arr = arg[0],
+            replaces = arg[1],
+            start = arg[2],
+            end = arg[3];
+        if(!isArray(arr)) return;
+        arr.forEach(function(item,i){
+            if(!start){
+                arr[i] = replaces;
+            }else{
+                if(!end){
+                    if(start <= i){
+                        arr[i] = replaces;
+                    }
+                }else{
+                    if(start <= i && end > i){
+                        arr[i] = replaces;
+                    }
+                }
+            }
+        });
+        return arr;
+    };
+//    console.log(_.fill([2,4,5,6,7,8],'*',1,5));
+//_.findIndex
+//    dash.prototype.findIndex = function(){
+//        let arr = arguments[0],obj = arguments[1];
+//        if(!isArray(arr)) return;
+//
+//    };
+//_.flatten
+    dash.prototype.flatten = function(arr){
+        if(!isArray(arr)) return;
+        let newArr = [];
+        arr.forEach(function(item){
+            isArray(item) ? (newArr = newArr.concat(item)) : newArr.push(item);
+        });
+        return newArr;
+    };
+//    console.log(_.flatten([1, [2, [3, [4]], 5]]));
+//_.flattenDeep
+    dash.prototype.flattenDeep = function(arr){
+        if(!isArray(arr)) return;
+        let newArr = [];
+        reduce(arr);
+        return newArr;
+        function reduce (flattenArr){
+            flattenArr.map(function(item,i){
+                isArray(item) ? reduce(item) : newArr.push(item);
+            })
+        }
+    };
+//    console.log(_.flattenDeep([1, [2, [3, [4]], 5]]));
+//_.flattenDepth
+    dash.prototype.flattenDepth = function(arr,num){
+        if(!isArray(arr)) return;
+        let newArr = [];
+        reduce(arr);
+        return newArr;
+        function reduce (flattenArr){
+            flattenArr.map(function(item,i){
+                isArray(item) ? (num > 0 ? reduce(item) : newArr = newArr.concat(item)) : newArr.push(item);
+                num--;
+            });
+        }
+    };
+//    console.log(_.flattenDepth([1, [2, [3, [4]], 5]], 2));
+//_.fromPairs
+    dash.prototype.fromPairs = function(arr){
+        if(!isArray(arr)) return;
+        let arrC = _.flattenDeep(arr),obj = {};
+        for(let i = 0;i <= arrC.length/2;i++){
+            obj[arrC[i]] = arrC[++i];
+        }
+        return obj;
+    };
+//    console.log(_.fromPairs([['a', 1], ['b', 2]]));
+//_.initial
+    dash.prototype.initial = function(arr){
+        if(!isArray(arr)) return;
+        return arr.slice(0,arr.length - 1);
+    };
+//    console.log(_.initial([1, 2, 3]));
+//_.intersection
+    dash.prototype.intersection = function(){
+        let newArr = [];
+        let arr = Array.prototype.slice.call(arguments,0),
+            indexArr = _.flatten(arr.splice(0,1)),
+            checkArr = _.flattenDeep(arr);
+        indexArr.forEach(function(item,i){
+            checkArr.indexOf(item) !== -1 && newArr.push(item);
+        });
+        return newArr;
+    };
+//    console.log( _.intersection([2, 1, 5, 3], [2, 3],[3, 4]));
+//_.intersectionBy
+    dash.prototype.intersectionBy = function(){
+        let newArr = [],
+            arr = Array.prototype.slice.call(arguments,0),
+            indexArr = _.flatten(arr.splice(0,1)),
+            method = arr.splice(arr.length - 1,1)[0],
+            checkArr = _.flattenDeep(arr);
+        for(let i = 0;i<indexArr.length;i++){
+            for(let j = 0;j < checkArr.length;j++){
+                method(indexArr[i]) === method(checkArr[j]) && newArr.push(indexArr[i]);
+            }
+        }
+        return newArr;
+    };
+//    console.log(_.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor));
+//_.nth
+    dash.prototype.nth = function(arr,index){
+        let newArr = arr.splice(0);
+        return newArr.splice(index,1);
+    };
+//    console.log(_.nth(['a', 'b', 'c', 'd'], -2));
+//_.pullAll
+    dash.prototype.pullAll = function(){
+        let arr = arguments[0],
+            set = new Set(_.flattenDeep([].slice.call(arguments,1))),
+            newSet = new Set();
+        for(let i of arr){
+            !set.has(i) && newSet.add(i);
+        }
+        return Array.from(newSet);
+    };
+//    console.log(_.pullAll(['a', 'b', 'c', 'a', 'b', 'c'], ['a', 'c'],['a','d']));
+//_.pullAllBy
+    dash.prototype.pullAllBy = function(){
+        let argArr = [].splice.call(arguments,0);
+        let arr = argArr[0],
+            val = argArr[1],
+            iter = argArr.splice(2,argArr.length)[0],
+            newArr = arr.slice(0);
+        for(let i = 0;i<val.length;i++){
+            for(let j = 0 ;j<newArr.length;j++){
+                if(newArr[j][iter] === val[i][iter]){
+                    newArr.splice(j,1);
+                }
+            }
+        }
+        return newArr;
+    };
+//    console.log(_.pullAllBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }], [{ 'x': 1 }, { 'x': 3 }], 'x'));
+//_.isEqual
+    dash.prototype.isEqual = function(obj1,obj2){
+        let arr1 = Object.keys(obj1),arr2 = Object.keys(obj2);
+        if(arr1.length !== arr2.length){
+            return false;
+        }else{
+            for(let i = 0;i<arr1.length;i++){
+                if(obj1[arr1[i]] !== obj2[arr1[i]] || !obj2[arr1[i]]){
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+//    console.log(_.isEqual({ 'a': 1 }, { 'a': 1 }));
+//_.pullAllWith
+    dash.prototype.pullAllWith = function(obj1,obj2,method){
+        let arr = obj1,
+            val = obj2,
+            newArr = arr.slice(0);
+        for(let i = 0;i<val.length;i++){
+            for(let j = 0 ;j<newArr.length;j++){
+                if(method(newArr[j],val[i])){
+                    newArr.splice(j,1);
+                }
+            }
+        }
+        return newArr;
+    };
+//    console.log(_.pullAllWith([{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }], [{ 'x': 3, 'y': 4 }], _.isEqual));
+//_.pullAt
+    dash.prototype.pullAt = function(arr,indexArr){
+        for(let i = 0;i<indexArr.length;i++){
+            arr.splice(indexArr[i] - i,1);
+        }
+        return arr;
+    };
+//    console.log(_.pullAt(['a', 'b', 'c', 'd'], [1, 2]));
+//_.remove
+    dash.prototype.remove = function(arr,func){
+        return arr.filter(function(item){
+            return func.call(null,item);
+        })
+    };
+//    console.log(_.remove([1, 2, 3, 4], function(n) {return n % 2 == 0;}));
+//_.sortedIndex
+    dash.prototype.sortedIndex = function(arr,val){
+        let newArr = arr.slice(0);
+        newArr.push(val);
+        newArr.sort(function(a,b){
+            return a - b;
+        });
+        return newArr.indexOf(val);
+    };
+//    console.log(_.sortedIndex([30, 50], 60));
+//_.sortedUniq
+    dash.prototype.sortedUniq = function(arr){
+        let newArr = new Set(arr.slice(0));
+        newArr = Array.from(newArr);
+        newArr.sort(function(a,b){
+            return a - b;
+        });
+        return newArr;
+    };
+//    console.log(_.sortedUniq([1, 3,1,4,1, 2]));
+
+</script>
+</html>
